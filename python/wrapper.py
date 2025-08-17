@@ -36,6 +36,12 @@ class RustClassificationDataSet(ClassificationDataSet):
 
 
 def transform_to_numpy(
-    data: npt.NDArray[np.float64] | torch.Tensor,
+    data: torch.Tensor,
 ) -> npt.NDArray[np.float64]:
+    check_tensor_is_double(data)
     return data.detach().cpu().numpy()
+
+
+def check_tensor_is_double(data: torch.Tensor):
+    if data.dtype != torch.float64:
+        raise TypeError("Tensor is not of type double (float64)")
