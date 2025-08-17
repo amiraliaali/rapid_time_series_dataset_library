@@ -5,11 +5,10 @@ from torch.utils.data import DataLoader, TensorDataset
 import numpy as np
 import numpy.typing as npt
 from rust_time_series import (
-    ForecastingDataSet,
-    ClassificationDataSet,
     ImputeStrategy,
     SplittingStrategy,
 )
+from wrapper import RustClassificationDataSet, RustForecastingDataSet
 
 print("Rust Time Series Wrapper Loaded")
 
@@ -22,12 +21,12 @@ class DatasetType(Enum):
 class RustDataModule(L.LightningDataModule):
     def __init__(
         self,
-        dataset: npt.NDArray[np.float64],
+        dataset: npt.NDArray[np.float64] | torch.Tensor,
         dataset_type: DatasetType,
         past_window: int = 1,
         future_horizon: int = 1,
         stride: int = 1,
-        labels: npt.NDArray[np.float64] | None = None,
+        labels: npt.NDArray[np.float64] | torch.Tensor | None = None,
         batch_size: int = 32,
         num_workers: int = 0,
         downsampling_rate: int = 0,
@@ -66,9 +65,12 @@ class RustDataModule(L.LightningDataModule):
     def setup(self, stage: str):
         if self.dataset_type == DatasetType.Forecasting:
             # call the method that applies the preprocessing steps and returns the split datasets
-            dataset = ForecastingDataSet(self.dataset, *self.splitting_ratios)
+            dataset = RustForecastingDataSet(self.dataset, *self.splitting_ratios)
         else:
-            dataset = ClassificationDataSet(
+            if not self.labels:
+                raise ValueError("Labels cannot be None for classification datasets")
+
+            dataset = RustClassificationDataSet(
                 self.dataset, self.labels, *self.splitting_ratios
             )
 
