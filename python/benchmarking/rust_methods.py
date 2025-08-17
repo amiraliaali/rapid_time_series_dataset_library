@@ -9,8 +9,8 @@ from rust_time_series.rust_time_series import (
 )
 import torch
 from torch.utils.data import TensorDataset
-import dataset_loaders
-from memory_monitor import ProcessStepMemoryTracker
+import python.benchmarking.dataset_loaders as dataset_loaders
+from python.benchmarking.memory_monitor import ProcessStepMemoryTracker
 
 
 class RustBenchmarkingModule(lightning_integration.RustDataModule):

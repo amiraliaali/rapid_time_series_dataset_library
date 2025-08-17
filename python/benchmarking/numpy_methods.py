@@ -7,9 +7,9 @@ import time
 import numpy as np
 import python.lightning_integration as lightning_integration
 import torch
-import dataset_loaders
+import python.benchmarking.dataset_loaders as dataset_loaders
 from torch.utils.data import TensorDataset
-from memory_monitor import ProcessStepMemoryTracker
+from python.benchmarking.memory_monitor import ProcessStepMemoryTracker
 
 
 def imputation(
