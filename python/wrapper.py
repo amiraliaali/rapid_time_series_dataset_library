@@ -44,4 +44,7 @@ def transform_to_numpy(
 
 def check_tensor_is_double(data: torch.Tensor):
     if data.dtype != torch.float64:
-        raise TypeError("Tensor is not of type double (float64)")
+        raise TypeError(
+            f"Tensor is not of type double (float64). Actual dtype: {data.dtype}. "
+            "You can convert it using `data = data.to(torch.float64)`."
+        )
