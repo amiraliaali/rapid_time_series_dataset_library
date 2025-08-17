@@ -4,7 +4,7 @@ from rust_time_series.rust_time_series import (
     SplittingStrategy,
 )
 import time
-import wrapper
+import python.lightning_integration as lightning_integration
 import pytorch_lightning as L
 import torch
 import pandas as pd
@@ -62,11 +62,11 @@ class ClassificationDataLoader:
         return self.original_dataloader.dataset
 
 
-class TorchBenchmarkingModule(wrapper.RustDataModule):
+class TorchBenchmarkingModule(lightning_integration.RustDataModule):
     def __init__(
         self,
         dataset: np.ndarray,
-        dataset_type: wrapper.DatasetType,
+        dataset_type: lightning_integration.DatasetType,
         past_window: int = 1,
         future_horizon: int = 1,
         stride: int = 1,
@@ -136,7 +136,9 @@ class TorchBenchmarkingModule(wrapper.RustDataModule):
                     self.timings["torch"]["imputation"] = delta
                     raise
 
-        if self.dataset_type == wrapper.DatasetType.Classification:  # Classification
+        if (
+            self.dataset_type == lightning_integration.DatasetType.Classification
+        ):  # Classification
             if self.working_labels["torch"] is None:
                 raise ValueError("Labels are required for classification tasks")
             (

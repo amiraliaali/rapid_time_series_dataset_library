@@ -1,6 +1,6 @@
 import time
 import numpy as np
-import wrapper
+import python.lightning_integration as lightning_integration
 from rust_time_series.rust_time_series import (
     ForecastingDataSet,
     ClassificationDataSet,
@@ -13,11 +13,11 @@ import dataset_loaders
 from memory_monitor import ProcessStepMemoryTracker
 
 
-class RustBenchmarkingModule(wrapper.RustDataModule):
+class RustBenchmarkingModule(lightning_integration.RustDataModule):
     def __init__(
         self,
         dataset: np.ndarray,
-        dataset_type: wrapper.DatasetType,
+        dataset_type: lightning_integration.DatasetType,
         past_window: int = 1,
         future_horizon: int = 1,
         stride: int = 1,
@@ -57,7 +57,7 @@ class RustBenchmarkingModule(wrapper.RustDataModule):
         self.memory_usage = self.memory_tracker.get_memory_usage()
 
     def setup(self, stage: str):
-        if self.dataset_type == wrapper.DatasetType.Forecasting:
+        if self.dataset_type == lightning_integration.DatasetType.Forecasting:
             with self.memory_tracker.track_step("dataset_creation"):
                 timer = time.perf_counter()
                 dataset = ForecastingDataSet(self.dataset, *self.splitting_ratios)
@@ -84,7 +84,7 @@ class RustBenchmarkingModule(wrapper.RustDataModule):
 
         with self.memory_tracker.track_step("data_splitting"):
             timer = time.perf_counter()
-            if self.dataset_type == wrapper.DatasetType.Classification:
+            if self.dataset_type == lightning_integration.DatasetType.Classification:
                 dataset.split(self.splitting_strategy)
             else:
                 dataset.split()
@@ -105,7 +105,7 @@ class RustBenchmarkingModule(wrapper.RustDataModule):
             timer = time.perf_counter()
             collect_args = (
                 (self.past_window, self.future_horizon, self.stride)
-                if self.dataset_type == wrapper.DatasetType.Forecasting
+                if self.dataset_type == lightning_integration.DatasetType.Forecasting
                 else ()
             )
             (
