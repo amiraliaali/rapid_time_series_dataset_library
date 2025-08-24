@@ -1,6 +1,6 @@
 import itertools
 from typing import Iterator, Dict, Any
-import wrapper
+import python.lightning_integration as lightning_integration
 from rust_time_series.rust_time_series import ImputeStrategy, SplittingStrategy
 
 
@@ -75,7 +75,7 @@ class ClassificationParameterIterator:
         config = {
             "original_data": self.data,
             "original_labels": self.labels,
-            "dataset_type": wrapper.DatasetType.Classification,
+            "dataset_type": lightning_integration.DatasetType.Classification,
             "past_window": past_window,
             "future_horizon": future_horizon,
             "stride": stride,

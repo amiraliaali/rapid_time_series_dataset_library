@@ -7,7 +7,7 @@ use crate::utils::{ get_split_views, get_split_views_by_prop_mut, get_split_view
 use numpy::PyArray3;
 use pyo3::prelude::*;
 
-#[pyclass]
+#[pyclass(subclass)]
 pub struct ForecastingDataSet {
     data: Py<PyArray3<f64>>,
     train_prop: f64,

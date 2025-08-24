@@ -5,11 +5,11 @@ from rust_time_series.rust_time_series import (
 )
 import time
 import numpy as np
-import wrapper
+import python.lightning_integration as lightning_integration
 import torch
-import dataset_loaders
+import python.benchmarking.dataset_loaders as dataset_loaders
 from torch.utils.data import TensorDataset
-from memory_monitor import ProcessStepMemoryTracker
+from python.benchmarking.memory_monitor import ProcessStepMemoryTracker
 
 
 def imputation(
@@ -221,18 +221,18 @@ def collect_data(
     val_labels,
     test_data,
     test_labels,
-    dataset_type: wrapper.DatasetType,
+    dataset_type: lightning_integration.DatasetType,
     past_window=1,
     future_horizon=1,
     stride=1,
 ):
-    if dataset_type == wrapper.DatasetType.Classification:
+    if dataset_type == lightning_integration.DatasetType.Classification:
         return (
             (train_data, train_labels),
             (val_data, val_labels),
             (test_data, test_labels),
         )
-    elif dataset_type == wrapper.DatasetType.Forecasting:
+    elif dataset_type == lightning_integration.DatasetType.Forecasting:
 
         def create_windows(data, past_window, future_horizon, stride):
             if past_window <= 0 or future_horizon <= 0 or stride <= 0:
@@ -295,11 +295,11 @@ def collect_data(
         raise ValueError(f"Unknown dataset type: {dataset_type}")
 
 
-class NumpyBenchmarkingModule(wrapper.RustDataModule):
+class NumpyBenchmarkingModule(lightning_integration.RustDataModule):
     def __init__(
         self,
         dataset: np.ndarray,
-        dataset_type: wrapper.DatasetType,
+        dataset_type: lightning_integration.DatasetType,
         past_window: int = 1,
         future_horizon: int = 1,
         stride: int = 1,
@@ -392,7 +392,7 @@ class NumpyBenchmarkingModule(wrapper.RustDataModule):
             delta = time.perf_counter() - timer
             self.timings["numpy"]["splitting"] = delta
 
-        if self.dataset_type == wrapper.DatasetType.Forecasting:
+        if self.dataset_type == lightning_integration.DatasetType.Forecasting:
             train_data, val_data, test_data = python_split_result
             self.split_datasets["numpy"] = (train_data, val_data, test_data)
             self.split_labels["numpy"] = None
@@ -431,7 +431,7 @@ class NumpyBenchmarkingModule(wrapper.RustDataModule):
 
         with self.memory_tracker.track_step("data_collection"):
             timer = time.perf_counter()
-            if self.dataset_type == wrapper.DatasetType.Forecasting:
+            if self.dataset_type == lightning_integration.DatasetType.Forecasting:
                 # for forecasting, apply sliding window generation
                 python_collected = collect_data(
                     self.split_datasets["numpy"][0],  # train_data
@@ -484,7 +484,7 @@ if __name__ == "__main__":
     big_timer = time.perf_counter()
     m = NumpyBenchmarkingModule(
         d,
-        wrapper.DatasetType.Forecasting,
+        lightning_integration.DatasetType.Forecasting,
         downsampling_rate=2,
         normalize=True,
         impute_strategy=ImputeStrategy.Mean,
