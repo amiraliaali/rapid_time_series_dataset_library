@@ -2,13 +2,12 @@ import numpy as np
 import numpy.typing as npt
 import torch
 from rust_time_series import ForecastingDataSet, ClassificationDataSet
-from typing import Union
 
 
 class RustForecastingDataSet(ForecastingDataSet):
     def __new__(
         cls,
-        data: Union[npt.NDArray[np.float64], torch.Tensor],
+        data: npt.NDArray[np.float64] | torch.Tensor,
         train_prop: float,
         val_prop: float,
         test_prop: float,
@@ -35,8 +34,8 @@ class RustForecastingDataSet(ForecastingDataSet):
 class RustClassificationDataSet(ClassificationDataSet):
     def __new__(
         cls,
-        data: Union[npt.NDArray[np.float64], torch.Tensor],
-        labels: Union[npt.NDArray[np.float64], torch.Tensor],
+        data: npt.NDArray[np.float64] | torch.Tensor,
+        labels: npt.NDArray[np.float64] | torch.Tensor,
         train_prop: float,
         val_prop: float,
         test_prop: float,

@@ -9,7 +9,6 @@ from rust_time_series import (
     SplittingStrategy,
 )
 from wrapper import RustClassificationDataSet, RustForecastingDataSet
-from typing import Union, Tuple
 
 print("Rust Time Series Wrapper Loaded")
 
@@ -22,12 +21,12 @@ class DatasetType(Enum):
 class RustDataModule(L.LightningDataModule):
     def __init__(
         self,
-        dataset: Union[npt.NDArray[np.float64], torch.Tensor],
+        dataset: npt.NDArray[np.float64] | torch.Tensor,
         dataset_type: DatasetType,
         past_window: int = 1,
         future_horizon: int = 1,
         stride: int = 1,
-        labels: Union[None, npt.NDArray[np.float64], torch.Tensor] = None,
+        labels: npt.NDArray[np.float64] | torch.Tensor | None = None,
         batch_size: int = 32,
         num_workers: int = 0,
         downsampling_rate: int = 0,
@@ -35,7 +34,7 @@ class RustDataModule(L.LightningDataModule):
         standardize: bool = False,
         impute_strategy: ImputeStrategy = ImputeStrategy.LeaveNaN,
         splitting_strategy: SplittingStrategy = SplittingStrategy.InOrder,
-        splitting_ratios: Tuple[float, float, float] = (
+        splitting_ratios: tuple[float, float, float] = (
             0.7,
             0.2,
             0.1,
