@@ -11,7 +11,7 @@ use pyo3::exceptions::PyValueError;
 #[cfg(feature = "test_expose")]
 use numpy::IntoPyArray;
 
-#[pyclass]
+#[pyclass(subclass)]
 pub struct ClassificationDataSet {
     data: Py<PyArray3<f64>>,
     labels: Py<PyArray1<f64>>,

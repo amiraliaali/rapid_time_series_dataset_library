@@ -4,12 +4,12 @@ import numpy as np
 import psutil
 import json
 import os
-import dataset_loaders
-from python_methods import PythonBenchmarkingModule
-from numpy_methods import NumpyBenchmarkingModule
-from rust_methods import RustBenchmarkingModule
-from torch_methods import TorchBenchmarkingModule
-from parameter_iterators import (
+import python.benchmarking.dataset_loaders as dataset_loaders
+from python.benchmarking.python_methods import PythonBenchmarkingModule
+from python.benchmarking.numpy_methods import NumpyBenchmarkingModule
+from python.benchmarking.rust_methods import RustBenchmarkingModule
+from python.benchmarking.torch_methods import TorchBenchmarkingModule
+from python.benchmarking.parameter_iterators import (
     ClassificationParameterIterator,
 )
 
